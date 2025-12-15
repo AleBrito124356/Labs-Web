@@ -1,0 +1,127 @@
+Problema #1: Conversor de Pulgadas a Centímetros
+Algoritmo resumido: leer 'pulgadas', convertir con la constante 2.54 y mostrar el resultado. Formulario HTML (archivo: pulgadas.html):
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Conversor de Pulgadas a Centímetros</title>
+</head>
+<body>
+<h1>Conversión pulgadas → centímetros</h1>
+<form method="post" action="convertir.php">
+<label for="pulgadas">Ingrese pulgadas:</label>
+<input type="number" id="pulgadas" name="pulgadas" step="0.01"
+min="0" required>
+<button type="submit">Convertir</button>
+</form>
+</body>
+</html>
+Script PHP (archivo: convertir.php):
+<?php
+// convertir.php
+// Convierte pulgadas a centímetros usando 1 in = 2.54 cm
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$pulgadas = isset($_POST['pulgadas']) ?
+floatval($_POST['pulgadas']) : 0;
+$cm = $pulgadas * 2.54;
+echo "<h2>Resultado</h2>";
+echo "<p>$pulgadas pulgadas equivalen a " . round($cm, 2) . "
+centímetros.</p>";
+echo '<p><a href="pulgadas.html">Volver</a></p>';
+} else {
+header('Location: pulgadas.html');
+exit;
+}
+?>
+5. Formulario HTML (Entrada de Datos)
+Ejemplo de formulario (archivo: formulario.html) que envía nombre y edad a un PHP:
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Formulario de entrada del dato</title>
+</head>
+<body>
+<form method="post" action="pagina2.php">
+<p>Ingrese su nombre: <input type="text" name="nombre" id="nombre"required></p>
+<p>Ingrese su edad: <input type="number" name="edad" id="edad"
+min="0" required></p>
+<input type="submit" value="Confirmar">
+</form>
+</body>
+</html>
+Script de recepción (archivo: pagina2.php):
+<?php
+// pagina2.php
+$nombre = $_POST['nombre'] ?? '';
+$edad = $_POST['edad'] ?? '';
+echo "<h1>Datos recibidos</h1>";
+echo "<p>Nombre: " . htmlspecialchars($nombre) . "</p>";
+echo "<p>Edad: " . intval($edad) . "</p>";
+echo '<p><a href="formulario.html">Regresar</a></p>';
+?>
+6. Problema #2: Calculadora en PHP
+Requisitos: sumar, restar, multiplicar y redondear decimales. Se implementa con un
+formulario único. Formulario de la calculadora (archivo: calculadora.html):
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Calculadora PHP</title>
+</head>
+<body>
+<h1>Calculadora</h1>
+<form method="post" action="calculadora.php">
+<p>Primer número: <input type="number" name="a" step="0.01"
+required></p>
+<p>Segundo número: <input type="number" name="b" step="0.01"
+required></p>
+<p>
+Operación:
+<select name="op" required>
+<option value="sumar">Sumar</option>
+<option value="restar">Restar</option>
+<option value="multiplicar">Multiplicar</option>
+<option value="redondear">Redondear A y B</option>
+</select>
+</p>
+<p>Decimales para redondeo: <input type="number" name="dec" min="0"max="6" value="2"></p>
+<button type="submit">Calcular</button>
+</form>
+</body>
+</html>
+Script de la calculadora (archivo: calculadora.php):
+<?php
+// calculadora.php
+$a = isset($_POST['a']) ? floatval($_POST['a']) : 0;
+$b = isset($_POST['b']) ? floatval($_POST['b']) : 0;
+$op = $_POST['op'] ?? 'sumar';
+$dec = isset($_POST['dec']) ? intval($_POST['dec']) : 2;
+$resultado = null;
+$detalle = '';
+switch ($op) {
+case 'sumar':
+$resultado = $a + $b;
+$detalle = "Suma";
+break;
+case 'restar':
+$resultado = $a - $b;
+$detalle = "Resta";
+break;
+case 'multiplicar':
+$resultado = $a * $b;
+$detalle = "Multiplicación";
+break;
+case 'redondear':
+$resultado = "A=" . round($a, $dec) . " / B=" . round($b, $dec);$detalle = "Redondeo con $dec decimales";
+break;
+default:
+$detalle = "Operación no válida";
+}
+echo "<h2>Resultado</h2>";
+if ($op === 'redondear') {
+echo "<p>$detalle → $resultado</p>";
+} else {
+echo "<p>$detalle de $a y $b = " . round($resultado, $dec) . "</p>";}
+echo '<p><a href="calculadora.html">Volver</a></p>';
+?>
