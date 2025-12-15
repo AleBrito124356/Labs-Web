@@ -1,0 +1,6 @@
+Solución en PHP:
+<?php
+for ($i = 1; $i <= 15; $i++) {
+ echo "4 ^ $i = " . pow(4, $i) . "<br>";
+}
+?>
