@@ -1,0 +1,140 @@
+<?php
+/*
+Práctica #2 – PHP
+Tema: Estructuras Repetitivas
+Incluye:
+1. Tabla de multiplicar
+2. Factorial
+3. Suma de números pares en un rango
+4. Números primos en un rango
+5. Explicación y uso de continue
+*/
+
+/* =====================================================
+   PROBLEMA 1: TABLA DE MULTIPLICAR
+   ===================================================== */
+
+$numero = 7;
+
+echo "=== PROBLEMA 1: TABLA DE MULTIPLICAR ===\n";
+echo "Tabla del $numero\n";
+
+for ($i = 1; $i <= 12; $i++) {
+    echo "$numero x $i = " . ($numero * $i) . "\n";
+}
+
+echo "\n";
+
+/* =====================================================
+   PROBLEMA 2: FACTORIAL
+   ===================================================== */
+
+$n = 6;
+
+echo "=== PROBLEMA 2: FACTORIAL ===\n";
+
+if ($n < 0) {
+    echo "El factorial no está definido para números negativos.\n";
+} else {
+    $factorial = 1;
+    $contador = 1;
+
+    while ($contador <= $n) {
+        $factorial *= $contador;
+        $contador++;
+    }
+
+    echo "Factorial de $n = $factorial\n";
+}
+
+echo "\n";
+
+/* =====================================================
+   PROBLEMA 3: SUMA DE NÚMEROS PARES EN UN RANGO
+   ===================================================== */
+
+$inicio = 1;
+$fin = 20;
+
+echo "=== PROBLEMA 3: SUMA DE PARES ===\n";
+echo "Rango: $inicio a $fin\n";
+
+if ($inicio > $fin) {
+    $temp = $inicio;
+    $inicio = $fin;
+    $fin = $temp;
+}
+
+$suma = 0;
+
+for ($i = $inicio; $i <= $fin; $i++) {
+    if ($i % 2 === 0) {
+        $suma += $i;
+    }
+}
+
+echo "Suma de números pares = $suma\n";
+
+echo "\n";
+
+/* =====================================================
+   PROBLEMA 4: NÚMEROS PRIMOS EN UN RANGO
+   ===================================================== */
+
+$inicio = 1;
+$fin = 50;
+
+echo "=== PROBLEMA 4: NÚMEROS PRIMOS ===\n";
+echo "Rango: $inicio a $fin\n";
+
+if ($inicio > $fin) {
+    $temp = $inicio;
+    $inicio = $fin;
+    $fin = $temp;
+}
+
+for ($n = $inicio; $n <= $fin; $n++) {
+
+    if ($n < 2) {
+        continue;
+    }
+
+    $esPrimo = true;
+
+    for ($d = 2; $d * $d <= $n; $d++) {
+        if ($n % $d === 0) {
+            $esPrimo = false;
+            break;
+        }
+    }
+
+    if ($esPrimo) {
+        echo $n . " ";
+    }
+}
+
+echo "\n\n";
+
+/* =====================================================
+   USO Y EXPLICACIÓN DE CONTINUE
+   ===================================================== */
+
+/*
+La instrucción `continue` se utiliza dentro de estructuras repetitivas
+para saltar el resto del código de la iteración actual y continuar con
+la siguiente vuelta del ciclo.
+
+No finaliza el ciclo completo (eso lo hace `break`).
+*/
+
+echo "=== DEMOSTRACIÓN DE CONTINUE ===\n";
+echo "Impresión solo de números pares del 1 al 10:\n";
+
+for ($i = 1; $i <= 10; $i++) {
+    if ($i % 2 !== 0) {
+        continue; // salta los números impares
+    }
+    echo $i . " ";
+}
+
+echo "\n";
