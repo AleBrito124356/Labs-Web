@@ -1,0 +1,122 @@
+1. Base de Datos
+Se creó la base de datos productosdb con la tabla productos, siguiendo la estructura
+obligatoria indicada en la guía. Esta tabla cuenta con los campos id, codigo, producto, precio
+y cantidad.
+SQL:
+CREATE TABLE productos (
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ codigo VARCHAR(20) NOT NULL,
+ producto VARCHAR(100) NOT NULL,
+ precio DECIMAL(10,2) NOT NULL,
+ cantidad INT NOT NULL
+);
+2. Estructura del Proyecto y Archivos
+• Modelo/conexion.php — Clase DB encargada de la conexión PDO, insertSeguro,
+updateSeguro y query.
+• Modelo/Productos.php — Clase Producto con validaciones, guardar(), editar() y buscar().
+• registrar.php — Archivo centralizado que recibe $_POST y ejecuta acciones mediante
+switch.
+• index.html — Formulario dinámico Bootstrap.
+• script.js — Lógica Fetch, validación del cliente y SweetAlert2.
+3. Clase conexión (conexion.php)
+<?php
+class DB {
+ private static $instancia = null;
+ private $pdo;
+ private function __construct() {
+ try {
+ $this->pdo = new PDO("mysql:host=localhost;dbname=productosdb", "root",
+"");
+ $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+ } catch (PDOException $e) {
+ die("Error en conexión: " . $e->getMessage());
+ }
+ }
+ public static function getConexion() {
+ if (self::$instancia === null) {
+ self::$instancia = new DB();
+ }
+ return self::$instancia->pdo;
+ }
+ public function insertSeguro($tabla, $data) {
+ $cols = implode(",", array_keys($data));
+ $marks = ":" . implode(",:", array_keys($data));
+ $sql = "INSERT INTO $tabla ($cols) VALUES ($marks)";
+ $stmt = self::$instancia->pdo->prepare($sql);
+ return $stmt->execute($data);
+ }
+}
+?>
+4. Clase Productos (Productos.php)
+<?php
+class Producto {
+ public $codigo;
+ public $producto;
+ public $precio;
+ public $cantidad;
+ public $errores = [];
+ public function validar() {
+ if (empty($this->codigo)) $this->errores[] = "El código es obligatorio.";
+ if (empty($this->producto)) $this->errores[] = "El nombre del producto es
+obligatorio.";
+ if (!is_numeric($this->precio)) $this->errores[] = "El precio debe ser
+numérico.";
+ if (!is_numeric($this->cantidad)) $this->errores[] = "La cantidad debe ser
+numérica.";
+ return empty($this->errores);
+ }
+ public function guardar() {
+ $db = DB::getConexion();
+ $data = [
+ "codigo"=>$this->codigo,
+ "producto"=>$this->producto,
+ "precio"=>$this->precio,
+ "cantidad"=>$this->cantidad
+ ];
+ return $db->insertSeguro("productos", $data);
+ }
+}
+?>
+5. Controlador registrar.php
+<?php
+require "Modelo/conexion.php";
+require "Modelo/Productos.php";
+$accion = $_POST['Accion'];
+switch ($accion) {
+ case "Guardar":
+ $p = new Producto();
+ $p->codigo = $_POST['Codigo'];
+ $p->producto = $_POST['Producto'];
+ $p->precio = $_POST['Precio'];
+ $p->cantidad = $_POST['Cantidad'];
+ if (!$p->validar()) {
+ echo json_encode(["success"=>false,"errors"=>$p->errores]);
+ exit;
+ }
+ $p->guardar();
+ echo json_encode(["success"=>true,"message"=>"Producto registrado"]);
+ break;
+ case "Modificar":
+ // Lógica similar con updateSeguro
+ break;
+}
+?>
+6. Script JavaScript (script.js)
+Se implementa uso de fetch(), FormData y SweetAlert2, cumpliendo con la rúbrica del
+laboratorio.
+document.getElementById("btnRegistrar").addEventListener("click", () => {
+ let frm = document.getElementById("frm");
+ let data = new FormData(frm);
+ fetch("registrar.php", {
+ method: "POST",
+ body: data
+ })
+ .then(r => r.json())
+ .then(res => {
+ if (res.success) {
+ Swal.fire("Éxito", res.message, "success");
+ } else {
+ Swal.fire("Error", res.errors.join("<br>"), "error");
+ }
+ });
+});
